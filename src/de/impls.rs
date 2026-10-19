@@ -143,7 +143,11 @@ macro_rules! float {
                     }
 
                     fn float(&mut self, n: f64) -> Result<()> {
-                        self.out = Some(n as $ty);
+                        let n = n as $ty;
+                        if n.is_infinite() {
+                            return Err(Error);
+                        }
+                        self.out = Some(n);
                         Ok(())
                     }
                 }

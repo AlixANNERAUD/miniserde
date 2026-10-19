@@ -66,17 +66,19 @@ signed!(i32);
 signed!(i64);
 signed!(isize);
 
-macro_rules! float {
-    ($ty:ident) => {
-        impl Serialize for $ty {
-            fn begin(&self) -> Fragment {
-                Fragment::F64(*self as f64)
-            }
-        }
-    };
+impl Serialize for f32 {
+    fn begin(&self) -> Fragment {
+        let mut buffer = zmij::Buffer::new();
+        let shortest = buffer.format(*self).parse().unwrap_or(*self as f64);
+        Fragment::F64(shortest)
+    }
 }
-float!(f32);
-float!(f64);
+
+impl Serialize for f64 {
+    fn begin(&self) -> Fragment {
+        Fragment::F64(*self)
+    }
+}
 
 impl<T> Serialize for &T
 where
