@@ -21,4 +21,6 @@ pub use self::array::Array;
 mod object;
 pub use self::object::Object;
 
+mod clone;
+mod debug;
 mod drop;

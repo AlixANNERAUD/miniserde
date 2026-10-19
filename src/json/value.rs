@@ -1,6 +1,6 @@
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::Result;
-use crate::json::{Array, Number, Object};
+use crate::json::{clone, debug, Array, Number, Object};
 use crate::ser::{Fragment, Serialize};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
@@ -26,7 +26,6 @@ use core::str;
 /// }
 /// // no stack overflow when `value` goes out of scope
 /// ```
-#[derive(Clone)]
 pub enum Value {
     Null,
     Bool(bool),
@@ -43,16 +42,15 @@ impl Default for Value {
     }
 }
 
+impl Clone for Value {
+    fn clone(&self) -> Self {
+        clone::deeply(self)
+    }
+}
+
 impl Debug for Value {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Value::Null => formatter.write_str("Null"),
-            Value::Bool(boolean) => write!(formatter, "Bool({})", boolean),
-            Value::Number(number) => write!(formatter, "Number({})", number),
-            Value::String(string) => write!(formatter, "String({:?})", string),
-            Value::Array(array) => Debug::fmt(array, formatter),
-            Value::Object(object) => Debug::fmt(object, formatter),
-        }
+        debug::value(self, formatter)
     }
 }
 

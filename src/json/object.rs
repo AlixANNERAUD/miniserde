@@ -1,6 +1,6 @@
 use crate::de::{Deserialize, Map, Visitor};
 use crate::error::Result;
-use crate::json::{drop, Value};
+use crate::json::{debug, drop, Value};
 use crate::ser::{self, Fragment, Serialize};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
@@ -93,8 +93,7 @@ impl FromIterator<(String, Value)> for Object {
 
 impl Debug for Object {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("Object ")?;
-        formatter.debug_map().entries(self).finish()
+        debug::object(self, formatter)
     }
 }
 

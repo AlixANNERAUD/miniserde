@@ -53,3 +53,27 @@ fn test_debug() {
 
     assert_eq!(debug, expected);
 }
+
+#[test]
+fn test_clone_and_debug_deeply_nested() {
+    let depth = if cfg!(miri) { 40 } else { 100_000 };
+
+    let mut j = String::new();
+    for _ in 0..depth {
+        j.push_str("{\"x\":[");
+    }
+    for _ in 0..depth {
+        j.push_str("]}");
+    }
+
+    let value: Value = json::from_str(&j).unwrap();
+    let clone = value.clone();
+    assert_eq!(json::to_string(&clone), j);
+
+    let debug = format!("{:?}", value);
+    assert!(debug.starts_with("Object {\"x\": Array [Object {\"x\": Array ["));
+    let shallow = "{\"x\":[".repeat(100) + &"]}".repeat(100);
+    let shallow: Value = json::from_str(&shallow).unwrap();
+    let pretty = format!("{:#?}", shallow);
+    assert!(pretty.ends_with("    ],\n}"));
+}

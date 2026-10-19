@@ -1,6 +1,6 @@
 use crate::de::{Deserialize, Seq, Visitor};
 use crate::error::Result;
-use crate::json::{drop, Value};
+use crate::json::{debug, drop, Value};
 use crate::private;
 use crate::ser::{Fragment, Serialize};
 use alloc::boxed::Box;
@@ -99,8 +99,7 @@ impl FromIterator<Value> for Array {
 
 impl Debug for Array {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("Array ")?;
-        formatter.debug_list().entries(self).finish()
+        debug::array(self, formatter)
     }
 }
 
